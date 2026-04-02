@@ -1,0 +1,130 @@
+@custom-variant dark (&:is(.dark *));
+
+/* GitHub Light */
+:root,
+[data-theme="github-light"] {
+  --font-size: 16px;
+  --background: #ffffff;
+  --foreground: #1f2328;
+  --card: #ffffff;
+  --card-foreground: #1f2328;
+  --primary: #030213;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f8fa;
+  --secondary-foreground: #1f2328;
+  --muted: #eef1f5;
+  --muted-foreground: #656d76;
+  --accent: #e9ebef;
+  --accent-foreground: #1f2328;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: #d0d7de;
+  --ring: #a1a1aa;
+  --radius: 0.625rem;
+  --sidebar: #f6f8fa;
+  --sidebar-foreground: #1f2328;
+  --sidebar-border: #d0d7de;
+  --sidebar-accent: #eef1f5;
+  --sidebar-accent-foreground: #1f2328;
+}
+
+/* Catppuccin Mocha (Dark) */
+[data-theme="catppuccin-dark"] {
+  --background: #1e1e2e;
+  --foreground: #cdd6f4;
+  --card: #1e1e2e;
+  --card-foreground: #cdd6f4;
+  --primary: #cdd6f4;
+  --primary-foreground: #1e1e2e;
+  --secondary: #313244;
+  --secondary-foreground: #cdd6f4;
+  --muted: #45475a;
+  --muted-foreground: #a6adc8;
+  --accent: #45475a;
+  --accent-foreground: #cdd6f4;
+  --destructive: #f38ba8;
+  --destructive-foreground: #1e1e2e;
+  --border: #45475a;
+  --ring: #585b70;
+  --sidebar: #181825;
+  --sidebar-foreground: #cdd6f4;
+  --sidebar-border: #313244;
+  --sidebar-accent: #1e1e2e;
+  --sidebar-accent-foreground: #cdd6f4;
+}
+
+/* Gruvbox Dark */
+[data-theme="gruvbox-dark"] {
+  --background: #282828;
+  --foreground: #ebdbb2;
+  --card: #282828;
+  --card-foreground: #ebdbb2;
+  --primary: #ebdbb2;
+  --primary-foreground: #282828;
+  --secondary: #3c3836;
+  --secondary-foreground: #ebdbb2;
+  --muted: #504945;
+  --muted-foreground: #a89984;
+  --accent: #504945;
+  --accent-foreground: #ebdbb2;
+  --destructive: #fb4934;
+  --destructive-foreground: #282828;
+  --border: #504945;
+  --ring: #665c54;
+  --sidebar: #1d2021;
+  --sidebar-foreground: #ebdbb2;
+  --sidebar-border: #3c3836;
+  --sidebar-accent: #282828;
+  --sidebar-accent-foreground: #ebdbb2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
