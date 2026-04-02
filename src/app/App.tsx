@@ -5,6 +5,7 @@ import { FileExplorer } from "./components/FileExplorer";
 import { MarkdownViewer } from "./components/MarkdownViewer";
 import { QuickOpen } from "./components/QuickOpen";
 import { initTheme } from "./stores/theme";
+import { initFileFilters } from "./stores/file-filters";
 import { zoomIn, zoomOut, zoomReset } from "./stores/zoom";
 import { setupMenuHandler, setupDragDrop } from "./lib/menu-handler";
 
@@ -14,6 +15,7 @@ export default function App() {
 
   onMount(() => {
     initTheme();
+    initFileFilters();
     setupMenuHandler({
       onExportPdf: () => window.print(),
       onToggleSidebar: () => {},
