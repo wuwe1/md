@@ -8,6 +8,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import type { HighlighterCore } from "shiki/core";
 import type { Root, Element, ElementContent } from "hast";
 
@@ -71,6 +72,30 @@ function rehypeExtractMermaid() {
   };
 }
 
+function rehypeResolveImages() {
+  return (tree: Root, file: { data: Record<string, unknown> }) => {
+    const basePath = file.data.basePath as string | undefined;
+    if (!basePath) return;
+
+    const walk = (node: Root | Element) => {
+      for (const child of node.children) {
+        if (child.type !== "element") continue;
+        if (child.tagName === "img") {
+          const src = child.properties?.src;
+          if (typeof src !== "string") continue;
+          if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) continue;
+          const resolved = decodeURIComponent(
+            new URL(src, "file://" + basePath + "/").pathname,
+          );
+          child.properties.src = convertFileSrc(resolved);
+        }
+        if ("children" in child) walk(child);
+      }
+    };
+    walk(tree);
+  };
+}
+
 let highlighter: HighlighterCore | null = null;
 
 async function getHighlighter(): Promise<HighlighterCore> {
@@ -112,6 +137,7 @@ const processor = unified()
   .use(remarkRehype, { allowDangerousHtml: false })
   .use(rehypeSanitize, schema)
   .use(rehypeExtractMermaid)
+  .use(rehypeResolveImages)
   .use(rehypeSlug)
   .use(rehypeStringify);
 
@@ -127,8 +153,8 @@ async function getProcessor() {
   return processorPromise;
 }
 
-export async function renderMarkdown(source: string): Promise<string> {
+export async function renderMarkdown(source: string, basePath?: string): Promise<string> {
   const p = await getProcessor();
-  const result = await p.process(source);
+  const result = await p.process({ value: source, data: { basePath } });
   return String(result);
 }

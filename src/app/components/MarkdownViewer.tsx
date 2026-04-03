@@ -92,7 +92,9 @@ export function MarkdownViewer(props: MarkdownViewerProps) {
       setHtml("");
       return;
     }
-    const rendered = await renderMarkdown(content);
+    const file = selectedFile();
+    const basePath = file ? file.path.substring(0, file.path.lastIndexOf("/")) : undefined;
+    const rendered = await renderMarkdown(content, basePath);
     setHtml(rendered);
   });
 
