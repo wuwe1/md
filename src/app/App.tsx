@@ -33,19 +33,19 @@ export default function App() {
         <ResizablePanels
           panels={[
             {
-              default: 20,
-              min: 15,
-              max: 30,
+              default: 12,
+              min: 10,
+              max: 25,
               content: () => <ProjectList />,
             },
             {
-              default: 25,
-              min: 20,
-              max: 40,
+              default: 18,
+              min: 12,
+              max: 35,
               content: () => <FileExplorer />,
             },
             {
-              default: 55,
+              default: 70,
               min: 40,
               max: 100,
               content: () => (

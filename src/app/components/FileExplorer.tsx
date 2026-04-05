@@ -40,14 +40,16 @@ function FileTreeItem(props: { node: FileNode; level: number; onContextMenu: (no
           }
         }}
         class="flex w-full items-center gap-1.5 rounded px-1.5 py-1 transition-colors"
-        classList={{
-          "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100": isSelected(),
-          "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300": !isSelected(),
+        style={{
+          "padding-left": `${props.level * 12 + 6}px`,
+          "background-color": isSelected() ? "var(--accent)" : "transparent",
+          color: isSelected() ? "var(--primary)" : "var(--foreground)",
         }}
-        style={{ "padding-left": `${props.level * 12 + 6}px` }}
+        onMouseEnter={(e) => { if (!isSelected()) e.currentTarget.style.backgroundColor = "var(--accent)"; }}
+        onMouseLeave={(e) => { if (!isSelected()) e.currentTarget.style.backgroundColor = "transparent"; }}
       >
         <Show when={props.node.type === "directory"}>
-          <span class="shrink-0 text-zinc-400 dark:text-zinc-500">
+          <span class="shrink-0" style={{ color: "var(--muted-foreground)" }}>
             <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <Show when={isFolderExpanded(props.node.id)} fallback={<polyline points="9 18 15 12 9 6" />}>
                 <polyline points="6 9 12 15 18 9" />
@@ -59,7 +61,7 @@ function FileTreeItem(props: { node: FileNode; level: number; onContextMenu: (no
         <Show
           when={props.node.type === "directory"}
           fallback={
-            <svg class="size-3.5 shrink-0 text-zinc-400 dark:text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="size-3.5 shrink-0" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />
               <line x1="16" y1="13" x2="8" y2="13" />
@@ -68,7 +70,7 @@ function FileTreeItem(props: { node: FileNode; level: number; onContextMenu: (no
             </svg>
           }
         >
-          <svg class="size-3.5 shrink-0 text-blue-500 dark:text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+          <svg class="size-3.5 shrink-0" style={{ color: "var(--primary)" }} viewBox="0 0 24 24" fill="currentColor">
             <path d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6z" />
           </svg>
         </Show>
@@ -132,7 +134,9 @@ export function FileExplorer() {
         />
         <button
           onClick={expandAllRoot}
-          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors"
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
           title="Expand all"
         >
           <svg class="size-3.5" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -142,7 +146,9 @@ export function FileExplorer() {
         </button>
         <button
           onClick={foldAllRoot}
-          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors"
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
           title="Fold all"
         >
           <svg class="size-3.5" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -152,8 +158,10 @@ export function FileExplorer() {
         </button>
         <button
           onClick={toggleShowHidden}
-          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
-          classList={{ "bg-zinc-200 dark:bg-zinc-700": showHidden() }}
+          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors"
+          style={{ "background-color": showHidden() ? "var(--accent)" : "transparent" }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => { if (!showHidden()) e.currentTarget.style.backgroundColor = "transparent"; }}
           title={showHidden() ? "Hide dotfiles" : "Show dotfiles"}
         >
           <svg class="size-3.5" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -163,8 +171,10 @@ export function FileExplorer() {
         </button>
         <button
           onClick={toggleShowGitignored}
-          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
-          classList={{ "bg-zinc-200 dark:bg-zinc-700": showGitignored() }}
+          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors"
+          style={{ "background-color": showGitignored() ? "var(--accent)" : "transparent" }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => { if (!showGitignored()) e.currentTarget.style.backgroundColor = "transparent"; }}
           title={showGitignored() ? "Hide gitignored" : "Show gitignored"}
         >
           <svg class="size-3.5" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="currentColor">

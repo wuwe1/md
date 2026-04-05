@@ -8,28 +8,21 @@ export interface TocEntry {
 
 interface TableOfContentsProps {
   contentEl: HTMLElement | undefined;
+  /** Reactive signal — TOC re-extracts headings whenever this value changes */
+  content?: string;
 }
 
 export function TableOfContents(props: TableOfContentsProps) {
   const [entries, setEntries] = createSignal<TocEntry[]>([]);
   const [activeId, setActiveId] = createSignal("");
 
+  // Re-extract headings whenever content changes (reactive via props.content)
   createEffect(() => {
+    void props.content;
     const el = props.contentEl;
     if (!el) return;
-
-    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-    const observer = new MutationObserver(() => {
-      if (debounceTimer) clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => extractHeadings(el), 100);
-    });
-    observer.observe(el, { childList: true, subtree: true });
-    extractHeadings(el);
-
-    onCleanup(() => {
-      observer.disconnect();
-      if (debounceTimer) clearTimeout(debounceTimer);
-    });
+    // Delay slightly so innerHTML has been applied
+    requestAnimationFrame(() => extractHeadings(el));
   });
 
   function extractHeadings(el: HTMLElement) {
@@ -90,7 +83,7 @@ export function TableOfContents(props: TableOfContentsProps) {
 
   return (
     <Show when={entries().length > 0}>
-      <div class="border-l border-zinc-200 dark:border-zinc-700" style={{ width: "200px", "min-width": "200px" }}>
+      <div class="border-l" style={{ width: "200px", "min-width": "200px", "border-color": "var(--border)" }}>
         <div class="sticky top-0 max-h-full overflow-y-auto p-3">
           <h3 class="mb-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>
             Contents
@@ -101,11 +94,13 @@ export function TableOfContents(props: TableOfContentsProps) {
                 <button
                   onClick={() => scrollTo(entry.id)}
                   class="block w-full truncate rounded px-2 py-0.5 text-left text-[11px] transition-colors"
-                  classList={{
-                    "text-blue-600 dark:text-blue-400 font-medium": activeId() === entry.id,
-                    "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200": activeId() !== entry.id,
+                  style={{
+                    color: activeId() === entry.id ? "var(--primary)" : "var(--muted-foreground)",
+                    "font-weight": activeId() === entry.id ? "500" : "normal",
+                    "padding-left": `${(entry.level - minLevel()) * 12 + 8}px`,
                   }}
-                  style={{ "padding-left": `${(entry.level - minLevel()) * 12 + 8}px` }}
+                  onMouseEnter={(e) => { if (activeId() !== entry.id) e.currentTarget.style.color = "var(--foreground)"; }}
+                  onMouseLeave={(e) => { if (activeId() !== entry.id) e.currentTarget.style.color = "var(--muted-foreground)"; }}
                 >
                   {entry.text}
                 </button>

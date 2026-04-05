@@ -1,24 +1,35 @@
 import { createSignal } from "solid-js";
 import { readJsonFile, writeJsonFile } from "../lib/persistence";
 
-export type ThemeName = "github-light" | "catppuccin-dark" | "gruvbox-dark";
+export type ThemeName = "light" | "dark";
 
-const THEME_NAMES = new Set<string>(["github-light", "catppuccin-dark", "gruvbox-dark"]);
-const DEFAULT_THEME: ThemeName = "github-light";
+const THEME_NAMES = new Set<string>(["light", "dark"]);
+const DEFAULT_THEME: ThemeName = "light";
+
+const MIGRATION: Record<string, ThemeName> = {
+  "github-light": "light",
+  "catppuccin-dark": "dark",
+  "gruvbox-dark": "dark",
+};
 
 const [currentTheme, setCurrentTheme] = createSignal<ThemeName>(DEFAULT_THEME);
 
 function applyTheme(theme: ThemeName) {
   const root = document.documentElement;
   root.setAttribute("data-theme", theme);
-  root.classList.toggle("dark", theme !== "github-light");
+  root.classList.toggle("dark", theme !== "light");
 }
 
 export function initTheme() {
   applyTheme(DEFAULT_THEME);
 
   readJsonFile<Record<string, string>>("settings.json", {}).then((settings) => {
-    const saved = settings.theme;
+    let saved = settings.theme;
+    if (saved && saved in MIGRATION) {
+      saved = MIGRATION[saved];
+      settings.theme = saved;
+      writeJsonFile("settings.json", settings);
+    }
     if (saved && THEME_NAMES.has(saved)) {
       setCurrentTheme(saved as ThemeName);
       applyTheme(saved as ThemeName);

@@ -63,7 +63,7 @@
 }
 
 .markdown-content blockquote {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--primary);
   padding: 0.5rem 1rem;
   margin: 1rem 0;
   font-style: italic;
@@ -74,15 +74,11 @@
 
 .markdown-content code:not(pre code) {
   background: var(--muted);
-  color: #db2777;
+  color: var(--primary);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-}
-
-.dark .markdown-content code:not(pre code) {
-  color: #f472b6;
 }
 
 /* Shiki dual-theme support */
@@ -114,13 +110,8 @@ html.dark .markdown-content .shiki span {
 }
 
 .markdown-content pre:not(:has(.shiki)) code {
-  background: #18181b;
-  color: #e4e4e7;
-}
-
-.dark .markdown-content pre:not(:has(.shiki)) code {
-  background: #27272a;
-  color: #d4d4d8;
+  background: var(--muted);
+  color: var(--foreground);
 }
 
 .markdown-content table {
@@ -144,16 +135,12 @@ html.dark .markdown-content .shiki span {
 }
 
 .markdown-content a {
-  color: #2563eb;
+  color: var(--link);
   text-decoration: none;
 }
 
 .markdown-content a:hover {
   text-decoration: underline;
-}
-
-.dark .markdown-content a {
-  color: #60a5fa;
 }
 
 .markdown-content hr {

@@ -11,9 +11,8 @@ interface MarkdownViewerProps {
 }
 
 const themeOptions: { value: ThemeName; label: string }[] = [
-  { value: "github-light", label: "Light" },
-  { value: "catppuccin-dark", label: "Catppuccin" },
-  { value: "gruvbox-dark", label: "Gruvbox" },
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" },
 ];
 
 function SettingsMenu() {
@@ -23,8 +22,10 @@ function SettingsMenu() {
     <div class="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        class="flex items-center gap-0.5 rounded px-1.5 py-1 text-[11px] transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
+        class="flex items-center gap-0.5 rounded px-1.5 py-1 text-[11px] transition-colors"
         style={{ color: "var(--muted-foreground)" }}
+        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
       >
         <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3" />
@@ -85,6 +86,7 @@ function SettingsMenu() {
 export function MarkdownViewer(props: MarkdownViewerProps) {
   const [html, setHtml] = createSignal("");
   let contentRef: HTMLDivElement | undefined;
+  let scrollRef: HTMLDivElement | undefined;
 
   createEffect(async () => {
     const content = fileContent();
@@ -96,6 +98,12 @@ export function MarkdownViewer(props: MarkdownViewerProps) {
     const basePath = file ? file.path.substring(0, file.path.lastIndexOf("/")) : undefined;
     const rendered = await renderMarkdown(content, basePath);
     setHtml(rendered);
+  });
+
+  // Reset scroll to top when content changes
+  createEffect(() => {
+    html();
+    if (scrollRef) scrollRef.scrollTop = 0;
   });
 
   createEffect(() => {
@@ -119,8 +127,10 @@ export function MarkdownViewer(props: MarkdownViewerProps) {
           <Show when={selectedFile()}>
             <button
               onClick={props.onToggleToc}
-              class="flex size-6 items-center justify-center rounded transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
-              classList={{ "bg-zinc-200 dark:bg-zinc-700": props.showToc }}
+              class="flex size-6 items-center justify-center rounded transition-colors"
+              style={{ "background-color": props.showToc ? "var(--accent)" : "transparent" }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+              onMouseLeave={(e) => { if (!props.showToc) e.currentTarget.style.backgroundColor = "transparent"; }}
               title="Table of Contents"
             >
               <svg class="size-3.5" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -134,7 +144,7 @@ export function MarkdownViewer(props: MarkdownViewerProps) {
       </div>
 
       <div class="flex flex-1 overflow-hidden">
-        <div class="flex-1 overflow-y-auto">
+        <div ref={scrollRef} class="flex-1 overflow-y-auto">
           <Show
             when={html()}
             fallback={
@@ -158,7 +168,7 @@ export function MarkdownViewer(props: MarkdownViewerProps) {
         </div>
 
         <Show when={props.showToc && html()}>
-          <TableOfContents contentEl={contentRef} />
+          <TableOfContents contentEl={contentRef} content={html()} />
         </Show>
       </div>
     </div>

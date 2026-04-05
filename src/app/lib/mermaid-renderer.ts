@@ -1,10 +1,26 @@
-import { renderMermaidSVG, THEMES } from "beautiful-mermaid";
+import { renderMermaidSVG } from "beautiful-mermaid";
+import type { DiagramColors } from "beautiful-mermaid";
 import type { ThemeName } from "../stores/theme";
 
-const THEME_MAP = {
-  "github-light": THEMES["github-light"],
-  "catppuccin-dark": THEMES["catppuccin-mocha"],
-  "gruvbox-dark": THEMES["one-dark"],
+const THEME_MAP: Record<ThemeName, DiagramColors> = {
+  light: {
+    bg: "#FAF9F5",
+    fg: "#1A1917",
+    line: "#D9D5CC",
+    accent: "#AE5630",
+    muted: "#8D877D",
+    surface: "#F0EEE6",
+    border: "#D9D5CC",
+  },
+  dark: {
+    bg: "#2B2A27",
+    fg: "#EAE7DF",
+    line: "#4A4843",
+    accent: "#D4967E",
+    muted: "#A9A39A",
+    surface: "#393937",
+    border: "#4A4843",
+  },
 };
 
 export function renderMermaidBlocks(container: HTMLElement, theme: ThemeName) {

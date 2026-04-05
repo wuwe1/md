@@ -26,7 +26,9 @@ export function ProjectList() {
         </span>
         <button
           onClick={addProjectViaDialog}
-          class="flex size-5 items-center justify-center rounded transition-colors hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          class="flex size-5 items-center justify-center rounded transition-colors"
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
         >
           <svg class="size-3" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -42,12 +44,12 @@ export function ProjectList() {
               onClick={() => selectProject(project.id)}
               onContextMenu={(e) => handleContextMenu(project.id, e)}
               class="mb-0.5 flex w-full items-center gap-2 rounded px-2 py-1.5 transition-colors"
-              classList={{
-                "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100":
-                  selectedProjectId() === project.id,
-                "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300":
-                  selectedProjectId() !== project.id,
+              style={{
+                "background-color": selectedProjectId() === project.id ? "var(--accent)" : "transparent",
+                color: selectedProjectId() === project.id ? "var(--primary)" : "var(--foreground)",
               }}
+              onMouseEnter={(e) => { if (selectedProjectId() !== project.id) e.currentTarget.style.backgroundColor = "var(--accent)"; }}
+              onMouseLeave={(e) => { if (selectedProjectId() !== project.id) e.currentTarget.style.backgroundColor = "transparent"; }}
             >
               <div
                 class="flex size-5 shrink-0 items-center justify-center rounded"

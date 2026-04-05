@@ -1,81 +1,58 @@
 @custom-variant dark (&:is(.dark *));
 
-/* GitHub Light */
+/* Claude Light */
 :root,
-[data-theme="github-light"] {
+[data-theme="light"] {
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: #1f2328;
-  --card: #ffffff;
-  --card-foreground: #1f2328;
-  --primary: #030213;
+  --background: #faf9f5;
+  --foreground: #1a1917;
+  --card: #f0eee6;
+  --card-foreground: #1a1917;
+  --primary: #ae5630;
   --primary-foreground: #ffffff;
-  --secondary: #f6f8fa;
-  --secondary-foreground: #1f2328;
-  --muted: #eef1f5;
-  --muted-foreground: #656d76;
-  --accent: #e9ebef;
-  --accent-foreground: #1f2328;
-  --destructive: #d4183d;
+  --secondary: #f0eee6;
+  --secondary-foreground: #1a1917;
+  --muted: #eae7df;
+  --muted-foreground: #8d877d;
+  --accent: #eae7df;
+  --accent-foreground: #1a1917;
+  --destructive: #a84b3a;
   --destructive-foreground: #ffffff;
-  --border: #d0d7de;
-  --ring: #a1a1aa;
+  --border: #d9d5cc;
+  --ring: #ae5630;
   --radius: 0.625rem;
-  --sidebar: #f6f8fa;
-  --sidebar-foreground: #1f2328;
-  --sidebar-border: #d0d7de;
-  --sidebar-accent: #eef1f5;
-  --sidebar-accent-foreground: #1f2328;
+  --link: #2563eb;
+  --sidebar: #f0eee6;
+  --sidebar-foreground: #1a1917;
+  --sidebar-border: #d9d5cc;
+  --sidebar-accent: #eae7df;
+  --sidebar-accent-foreground: #1a1917;
 }
 
-/* Catppuccin Mocha (Dark) */
-[data-theme="catppuccin-dark"] {
-  --background: #1e1e2e;
-  --foreground: #cdd6f4;
-  --card: #1e1e2e;
-  --card-foreground: #cdd6f4;
-  --primary: #cdd6f4;
-  --primary-foreground: #1e1e2e;
-  --secondary: #313244;
-  --secondary-foreground: #cdd6f4;
-  --muted: #45475a;
-  --muted-foreground: #a6adc8;
-  --accent: #45475a;
-  --accent-foreground: #cdd6f4;
-  --destructive: #f38ba8;
-  --destructive-foreground: #1e1e2e;
-  --border: #45475a;
-  --ring: #585b70;
-  --sidebar: #181825;
-  --sidebar-foreground: #cdd6f4;
-  --sidebar-border: #313244;
-  --sidebar-accent: #1e1e2e;
-  --sidebar-accent-foreground: #cdd6f4;
-}
-
-/* Gruvbox Dark */
-[data-theme="gruvbox-dark"] {
-  --background: #282828;
-  --foreground: #ebdbb2;
-  --card: #282828;
-  --card-foreground: #ebdbb2;
-  --primary: #ebdbb2;
-  --primary-foreground: #282828;
-  --secondary: #3c3836;
-  --secondary-foreground: #ebdbb2;
-  --muted: #504945;
-  --muted-foreground: #a89984;
-  --accent: #504945;
-  --accent-foreground: #ebdbb2;
-  --destructive: #fb4934;
-  --destructive-foreground: #282828;
-  --border: #504945;
-  --ring: #665c54;
-  --sidebar: #1d2021;
-  --sidebar-foreground: #ebdbb2;
-  --sidebar-border: #3c3836;
-  --sidebar-accent: #282828;
-  --sidebar-accent-foreground: #ebdbb2;
+/* Claude Dark */
+[data-theme="dark"] {
+  --background: #2b2a27;
+  --foreground: #eae7df;
+  --card: #393937;
+  --card-foreground: #eae7df;
+  --primary: #d4967e;
+  --primary-foreground: #1f1e1b;
+  --secondary: #393937;
+  --secondary-foreground: #eae7df;
+  --muted: #353432;
+  --muted-foreground: #a9a39a;
+  --accent: #3d3c39;
+  --accent-foreground: #eae7df;
+  --destructive: #d47563;
+  --destructive-foreground: #1f1e1b;
+  --border: #4a4843;
+  --ring: #d4967e;
+  --link: #60a5fa;
+  --sidebar: #201d18;
+  --sidebar-foreground: #eae7df;
+  --sidebar-border: #3d3c39;
+  --sidebar-accent: #2b2a27;
+  --sidebar-accent-foreground: #eae7df;
 }
 
 @theme inline {
