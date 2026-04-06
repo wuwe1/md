@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicegui/tauri-2/main/core/tauri-config-schema/schema.json",
   "productName": "md",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "identifier": "com.md.app",
   "build": {
     "frontendDist": "../dist",
