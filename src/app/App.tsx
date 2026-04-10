@@ -1,11 +1,11 @@
 import { createSignal, onMount } from "solid-js";
 import { ResizablePanels } from "./components/layout/ResizablePanels";
-import { ProjectList } from "./components/ProjectList";
 import { FileExplorer } from "./components/FileExplorer";
 import { MarkdownViewer } from "./components/MarkdownViewer";
 import { QuickOpen } from "./components/QuickOpen";
 import { initTheme } from "./stores/theme";
 import { initFileFilters } from "./stores/file-filters";
+import { loadProjects } from "./stores/projects";
 import { zoomIn, zoomOut, zoomReset } from "./stores/zoom";
 import { setupMenuHandler, setupDragDrop } from "./lib/menu-handler";
 
@@ -16,6 +16,7 @@ export default function App() {
   onMount(() => {
     initTheme();
     initFileFilters();
+    loadProjects();
     setupMenuHandler({
       onExportPdf: () => window.print(),
       onToggleSidebar: () => {},
@@ -33,21 +34,15 @@ export default function App() {
         <ResizablePanels
           panels={[
             {
-              default: 12,
-              min: 10,
-              max: 25,
-              content: () => <ProjectList />,
-            },
-            {
-              default: 18,
-              min: 12,
-              max: 35,
+              default: 22,
+              min: 15,
+              max: 40,
               content: () => <FileExplorer />,
             },
             {
-              default: 70,
-              min: 40,
-              max: 100,
+              default: 78,
+              min: 50,
+              max: 85,
               content: () => (
                 <MarkdownViewer
                   showToc={showToc()}

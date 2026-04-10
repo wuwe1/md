@@ -123,6 +123,7 @@ export function foldAllRoot() {
 
 let unwatchFn: (() => void) | null = null;
 let watcherDebounce: ReturnType<typeof setTimeout> | null = null;
+let foldOnNextLoad = false;
 
 async function loadFileTree(projectPath: string) {
   try {
@@ -131,6 +132,10 @@ async function loadFileTree(projectPath: string) {
     const gitignore = gitignored ? null : await loadGitignoreRules(projectPath);
     const tree = await buildTree(projectPath, projectPath, { showHidden: hidden, gitignore });
     setFileTree(tree);
+    if (foldOnNextLoad) {
+      foldAllRoot();
+      foldOnNextLoad = false;
+    }
   } catch {
     setFileTree([]);
   }
@@ -168,6 +173,7 @@ createEffect(on(selectedProjectId, (projectId) => {
   setSelectedFile(null);
   setFileContent(null);
   setCollapsedFolders(new Set<string>());
+  foldOnNextLoad = true;
 
   if (!projectId) return;
   const project = projects().find((p) => p.id === projectId);

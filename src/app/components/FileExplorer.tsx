@@ -1,4 +1,5 @@
 import { createSignal, For, Show } from "solid-js";
+import { confirm } from "@tauri-apps/plugin-dialog";
 import {
   fileTree,
   selectedFile,
@@ -11,6 +12,13 @@ import {
   foldAllRoot,
   type FileNode,
 } from "../stores/files";
+import {
+  projects,
+  selectedProjectId,
+  selectProject,
+  removeProject,
+} from "../stores/projects";
+import { addProjectViaDialog } from "../lib/menu-handler";
 import {
   showHidden,
   showGitignored,
@@ -96,6 +104,9 @@ interface ContextMenuState {
 export function FileExplorer() {
   const [search, setSearch] = createSignal("");
   const [contextMenu, setContextMenu] = createSignal<ContextMenuState | null>(null);
+  const [popoverOpen, setPopoverOpen] = createSignal(false);
+
+  const selectedProject = () => projects().find((p) => p.id === selectedProjectId());
 
   function filterTree(nodes: FileNode[], query: string): FileNode[] {
     if (!query) return nodes;
@@ -121,8 +132,133 @@ export function FileExplorer() {
 
   const closeContextMenu = () => setContextMenu(null);
 
+  const handleSelectProject = (id: string) => {
+    selectProject(id);
+    setPopoverOpen(false);
+  };
+
+  const handleRemoveProject = async (id: string, e: MouseEvent) => {
+    e.stopPropagation();
+    const project = projects().find((p) => p.id === id);
+    const confirmed = await confirm(`Remove "${project?.name}" from the list?`, { title: "Remove Project", kind: "warning" });
+    if (confirmed) {
+      await removeProject(id);
+      if (projects().length === 0) setPopoverOpen(false);
+    }
+  };
+
+  const handleAddProject = async () => {
+    setPopoverOpen(false);
+    await addProjectViaDialog();
+  };
+
   return (
     <div class="flex h-full select-none flex-col" style={{ "background-color": "var(--background)" }} onContextMenu={(e) => e.preventDefault()}>
+      {/* Project selector */}
+      <div class="relative flex h-9 shrink-0 items-center gap-1 border-b px-2" style={{ "border-color": "var(--border)" }}>
+        <button
+          onClick={() => setPopoverOpen(!popoverOpen())}
+          class="flex min-w-0 flex-1 items-center gap-2 rounded px-1.5 py-1 transition-colors"
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+        >
+          <Show when={selectedProject()} fallback={
+            <span class="truncate text-xs" style={{ color: "var(--muted-foreground)" }}>Select Project</span>
+          }>
+            {(project) => (
+              <>
+                <div class="flex size-4 shrink-0 items-center justify-center rounded" style={{ "background-color": project().color }}>
+                  <svg class="size-2.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6z" />
+                  </svg>
+                </div>
+                <span class="truncate text-xs font-medium" style={{ color: "var(--foreground)" }}>{project().name}</span>
+              </>
+            )}
+          </Show>
+          <svg class="ml-auto size-3 shrink-0" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+        <button
+          onClick={handleAddProject}
+          class="flex size-6 shrink-0 items-center justify-center rounded transition-colors"
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+          title="Add project"
+        >
+          <svg class="size-3" style={{ color: "var(--muted-foreground)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+
+        {/* Project popover */}
+        <Show when={popoverOpen()}>
+          <div class="fixed inset-0 z-40" onClick={() => setPopoverOpen(false)} />
+          <div
+            class="absolute left-1 right-1 top-full z-50 mt-1 overflow-hidden rounded-lg py-1 shadow-lg"
+            style={{
+              "background-color": "var(--background)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <div class="max-h-[240px] overflow-y-auto">
+              <For each={projects()}>
+                {(project) => (
+                  <button
+                    onClick={() => handleSelectProject(project.id)}
+                    class="group flex w-full items-center gap-2 px-2 py-1.5 transition-colors"
+                    style={{
+                      "background-color": selectedProjectId() === project.id ? "var(--accent)" : "transparent",
+                      color: selectedProjectId() === project.id ? "var(--primary)" : "var(--foreground)",
+                    }}
+                    onMouseEnter={(e) => { if (selectedProjectId() !== project.id) e.currentTarget.style.backgroundColor = "var(--accent)"; }}
+                    onMouseLeave={(e) => { if (selectedProjectId() !== project.id) e.currentTarget.style.backgroundColor = "transparent"; }}
+                  >
+                    <div class="flex size-4 shrink-0 items-center justify-center rounded" style={{ "background-color": project.color }}>
+                      <svg class="size-2.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6z" />
+                      </svg>
+                    </div>
+                    <span class="truncate text-xs font-medium">{project.name}</span>
+                    <button
+                      onClick={(e) => handleRemoveProject(project.id, e)}
+                      class="ml-auto flex size-4 shrink-0 items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100"
+                      style={{ color: "var(--muted-foreground)" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--destructive)"; e.currentTarget.style.color = "var(--destructive-foreground)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "var(--muted-foreground)"; }}
+                      title="Remove project"
+                    >
+                      <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </button>
+                )}
+              </For>
+            </div>
+            <div class="border-t px-1 pt-1" style={{ "border-color": "var(--border)" }}>
+              <button
+                onClick={handleAddProject}
+                class="flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs transition-colors"
+                style={{ color: "var(--muted-foreground)" }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--accent)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
+              >
+                <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Project
+              </button>
+            </div>
+          </div>
+        </Show>
+      </div>
+
+      {/* Search + toolbar */}
       <div class="flex h-9 shrink-0 items-center gap-1 border-b px-2" style={{ "border-color": "var(--border)" }}>
         <input
           type="text"
@@ -183,6 +319,7 @@ export function FileExplorer() {
         </button>
       </div>
 
+      {/* File tree */}
       <div class="flex-1 overflow-y-auto px-1.5 py-1">
         <Show
           when={filteredTree().length > 0}
@@ -198,6 +335,7 @@ export function FileExplorer() {
         </Show>
       </div>
 
+      {/* Folder context menu */}
       <Show when={contextMenu()}>
         {(menu) => (
           <>
